@@ -15,18 +15,17 @@ import javax.persistence.TemporalType;
 import lombok.Data;
 
 @Entity
-@Table(name="cidade")
+@Table(name="produto_imagens")
 @Data
-
-public class Cidade {
+public class ProdutoImagens {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
 	private String nome;
 	@ManyToOne
-	@JoinColumn(name="idEstado")
-	private Estado estado;
+	@JoinColumn(name="idProduto")
+	private Produto produto;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataCriacao;
 	@Temporal(TemporalType.TIMESTAMP)

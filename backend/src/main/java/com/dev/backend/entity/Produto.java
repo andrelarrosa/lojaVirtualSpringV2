@@ -12,21 +12,30 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.dev.backend.entity.Marca;
+import com.dev.backend.entity.Categoria;
+
 import lombok.Data;
 
 @Entity
-@Table(name="cidade")
+@Table(name="produto")
 @Data
+public class Produto {
 
-public class Cidade {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
-	private String nome;
+	private String descricaoCurta;
+	private String descricaoDetalhada;
+	private Double valorCusto;
+	private Double valorVenda;
 	@ManyToOne
-	@JoinColumn(name="idEstado")
-	private Estado estado;
+	@JoinColumn(name = "idMarca")
+	private Marca marca;
+	@ManyToOne
+	@JoinColumn(name = "idCategoria")
+	private Categoria categoria;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataCriacao;
 	@Temporal(TemporalType.TIMESTAMP)
