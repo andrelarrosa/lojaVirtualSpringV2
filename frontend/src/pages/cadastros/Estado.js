@@ -37,7 +37,6 @@ const Estado = () => {
     useEffect(() => {
         if(objetos == null){
             objetoService.estados().then(res =>{
-                console.log(res.data);
                 setObjetos(res.data);
             })
         }
@@ -47,6 +46,15 @@ const Estado = () => {
         Axios.get("http://localhost:8080/api/estado/").then(result => {
             setObjetos(result.data);
         });
+    }
+
+    const actionBodyTemplate = (rowData) => {
+        return (
+            <div className="actions">
+                <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" onClick={() => editObjeto(rowData)} />
+                <Button icon="pi pi-trash" className="p-button-rounded p-button-warning mt-2" onClick={() => confirmDeleteObjeto(rowData)} />
+            </div>
+        );
     }
 
     const openNew = () => {
@@ -100,7 +108,7 @@ const Estado = () => {
     }
 
     const onInputChange = (e, name) => {
-        const val = (e.target && e.targe.value) || '';
+        const val = (e.target && e.target.value) || '';
         let _objeto = {...objeto};
         _objeto[`${name}`] = val;
 
@@ -111,7 +119,7 @@ const Estado = () => {
         return (
         <React.Fragment>
             <div className='my-2'>
-                <Button label="Novo Estado" icon="pi pi-plus" className='p-button-success'/>
+                <Button label="Novo Estado" icon="pi pi-plus" className='p-button-success' onClick={openNew}/>
             </div>
         </React.Fragment>
         );
@@ -172,6 +180,7 @@ const Estado = () => {
             <div className="col-12">
                 <div className="card">
                     <Toast ref={toast} />
+                    <Toolbar className="mb-4" left={leftToolbarTemplate}></Toolbar>
 
                     <DataTable ref={dt} value={objetos} dataKey="id" paginator rows={10} rowsPerPageOptions={[5, 10, 25]} className="datatable-responsive"
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
@@ -181,18 +190,19 @@ const Estado = () => {
                         <Column field="id" header="id" sortable body={idBodyTemplate} headerStyle={{ width: '14%', minWidth: '10rem' }}></Column>
                         <Column field="nome" header="Nome" sortable body={nomeBodyTemplate} headerStyle={{ width: '14%', minWidth: '10rem' }}></Column>
                         <Column field="sigla" header="Sigla" sortable body={siglaBodyTemplate} headerStyle={{ width: '14%', minWidth: '10rem' }}></Column>
+                        <Column body={actionBodyTemplate}></Column>
                     </DataTable>
 
-                    <Dialog visible={objetoDialog} style={{width: '450px'}} header='Cadastro Estado'>
+                    <Dialog visible={objetoDialog} style={{ width: '450px' }} footer={objetoDialogFooter} header="Cadastrar/Editar" modal className="p-fluid" onHide={hideDialog}>
                         <div className="field">
-                            <label htmlFor="nome">nome</label>
+                            <label htmlFor="nome">Nome</label>
                             <InputText id="nome" value={objeto.nome} onChange={(e) => onInputChange(e, 'nome')} required autoFocus className={classNames({ 'p-invalid': submitted && !objeto.nome })} />
-                            {submitted && !objeto.nome && <small className="p-invalid">Nome é requerido.</small>}
+                            {submitted && !objeto.name && <small className="p-invalid">Nome é requerido.</small>}
                         </div>
                         <div className="field">
                             <label htmlFor="sigla">sigla</label>
-                            <InputText id="sigla" value={objeto.nome} onChange={(e) => onInputChange(e, 'sigla')} required autoFocus className={classNames({ 'p-invalid': submitted && !objeto.nome })} />
-                            {submitted && !objeto.nome && <small className="p-invalid">Sigla é requerida.</small>}
+                            <InputText id="sigla" value={objeto.sigla} onChange={(e) => onInputChange(e, 'sigla')} required autoFocus className={classNames({ 'p-invalid': submitted && !objeto.sigla })} />
+                            {submitted && !objeto.sigla && <small className="p-invalid">Sigla é requerida.</small>}
                         </div>
                     </Dialog>
 

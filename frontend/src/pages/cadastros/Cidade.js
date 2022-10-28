@@ -36,10 +36,10 @@ const Cidade = () => {
     const toast = useRef(null);
     const dt = useRef(null);
     const objetoService = new CidadeService();
-    const EstadoService = new EstadoService();
+    const estadoService = new EstadoService();
 
     useEffect(() => {
-        EstadoService.estados().then(res =>{
+        estadoService.estados().then(res =>{
             setEstados(res.data);
         })
     }, []);
@@ -47,11 +47,13 @@ const Cidade = () => {
     useEffect(() => {
         if(objetos == null){
             objetoService.cidades().then(res =>{
-                console.log(res.data);
                 setObjetos(res.data);
             })
         }
     }, [objetos]);
+
+
+
 
     function listarCidades() {
         Axios.get("http://localhost:8080/api/cidade/").then(result => {
@@ -109,19 +111,28 @@ const Cidade = () => {
         })
     }
 
-    const onInputChange = (e, name) => {
-        const val = (e.target && e.targe.value) || '';
+    const onInputChange = (e, nome) => {
+        const val = (e.target && e.target.value) || '';
         let _objeto = {...objeto};
-        _objeto[`${name}`] = val;
+        _objeto[`${nome}`] = val;
 
         setObjeto(_objeto);
+    }
+
+    const actionBodyTemplate = (rowData) => {
+        return (
+            <div className="actions">
+                <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" onClick={() => editObjeto(rowData)} />
+                <Button icon="pi pi-trash" className="p-button-rounded p-button-warning mt-2" onClick={() => confirmDeleteObjeto(rowData)} />
+            </div>
+        );
     }
 
     const leftToolbarTemplate = () => {
         return (
         <React.Fragment>
             <div className='my-2'>
-                <Button label="Novo cidade" icon="pi pi-plus" className='p-button-success'/>
+                <Button label="Novo cidade" icon="pi pi-plus" className='p-button-success' onClick={openNew}/>
             </div>
         </React.Fragment>
         );
@@ -182,6 +193,7 @@ const Cidade = () => {
             <div className="col-12">
                 <div className="card">
                     <Toast ref={toast} />
+                    <Toolbar className="mb-4" left={leftToolbarTemplate}></Toolbar>
 
                     <DataTable ref={dt} value={objetos} dataKey="id" paginator rows={10} rowsPerPageOptions={[5, 10, 25]} className="datatable-responsive"
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
@@ -191,17 +203,18 @@ const Cidade = () => {
                         <Column field="id" header="id" sortable body={idBodyTemplate} headerStyle={{ width: '14%', minWidth: '10rem' }}></Column>
                         <Column field="nome" header="Nome" sortable body={nomeBodyTemplate} headerStyle={{ width: '14%', minWidth: '10rem' }}></Column>
                         <Column field="estado" header="estado" sortable body={estadoBodyTemplate} headerStyle={{ width: '14%', minWidth: '10rem' }}></Column>
+                        <Column body={actionBodyTemplate}></Column>
                     </DataTable>
 
-                    <Dialog visible={objetoDialog} style={{width: '450px'}} header='Cadastro Cidade'>
+                    <Dialog visible={objetoDialog} style={{ width: '450px' }} footer={objetoDialogFooter} header="Product Details" modal className="p-fluid" onHide={hideDialog}>
                         <div className="field">
-                            <label htmlFor="nome">nome</label>
-                            <InputText id="nome" value={objeto.nome} onChange={(e) => onInputChange(e, 'nome')} required autoFocus className={classNames({ 'p-invalid': submitted && !objeto.nome })} />
-                            {submitted && !objeto.nome && <small className="p-invalid">Nome é requerido.</small>}
+                            <label htmlFor="nome">Nome</label>
+                            <InputText id="name" value={objeto.nome} onChange={(e) => onInputChange(e, 'nome')} required autoFocus className={classNames({ 'p-invalid': submitted && !objeto.nome })} />
+                            {submitted && !objeto.name && <small className="p-invalid">Name is required.</small>}
                         </div>
                         <div className="field">
                             <label htmlFor="estado">estado</label>
-                            <Dropdown optionLabel="name" value={objeto.estado} options={estados} onChange={(e) => onInputChange(e, 'estado')} placeholder="Selecione um Estado"/>
+                            <Dropdown optionLabel="nome" value={objeto.estado} options={estados} filter onChange={(e) => onInputChange(e, 'estado')} placeholder="Selecione um Estado"/>
                         </div>
                     </Dialog>
 
