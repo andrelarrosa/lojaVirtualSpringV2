@@ -32,6 +32,7 @@ import IconsDemo from './components/IconsDemo';
 import Crud from './pages/Crud';
 import Estado from './pages/cadastros/Estado';
 import Cidade from './pages/cadastros/Cidade';
+import Pessoa from './pages/cadastros/Pessoa';
 import EmptyPage from './pages/EmptyPage';
 import TimelineDemo from './pages/TimelineDemo';
 
@@ -46,6 +47,8 @@ import './assets/demo/flags/flags.css';
 import './assets/demo/Demos.scss';
 import './assets/layout/layout.scss';
 import './App.scss';
+import Categoria from './pages/cadastros/Categoria';
+import Marca from './pages/cadastros/Marca';
 
 const App = () => {
     const [layoutMode, setLayoutMode] = useState('static');
@@ -204,6 +207,9 @@ const App = () => {
                 { label: 'Crud', icon: 'pi pi-fw pi-user-edit', to: '/crud' },
                 { label: 'Estado', icon: 'pi pi-fw pi-state-edit', to: '/estado' },
                 { label: 'Cidade', icon: 'pi pi-fw pi-state-edit', to: '/cidade' },
+                { label: 'Pessoa', icon: 'pi pi-fw pi-state-edit', to: '/pessoa' },
+                { label: 'Categoria', icon: 'pi pi-fw pi-state-edit', to: '/categoria' },
+                { label: 'Marca', icon: 'pi pi-fw pi-state-edit', to: '/marca' },
                 { label: 'Timeline', icon: 'pi pi-fw pi-calendar', to: '/timeline' },
                 { label: 'Empty', icon: 'pi pi-fw pi-circle-off', to: '/empty' }
             ]
@@ -323,6 +329,9 @@ const App = () => {
                     <Route path="/crud" component={Crud} />
                     <Route path="/estado" component={Estado} />
                     <Route path="/cidade" component={Cidade} />
+                    <Route path="/pessoa" component={Pessoa} />
+                    <Route path="/categoria" component={Categoria} />
+                    <Route path="/marca" component={Marca} />
                     <Route path="/empty" component={EmptyPage} />
                     <Route path="/documentation" component={Documentation} />
                 </div>
