@@ -3,8 +3,12 @@ import Axios from "axios";
 export class ProdutoService {
     url = process.env.REACT_APP_URI_API+"/produto/";
 
-    categorias(){
+    produtos(){
         return Axios.get(this.url);
+    }
+
+    buscarPorId(id){
+        return Axios.get(this.url+id);
     }
 
     inserir(objeto){

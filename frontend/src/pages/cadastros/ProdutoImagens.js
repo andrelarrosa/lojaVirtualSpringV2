@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { DataView } from 'primereact/dataview';
 import { Button } from 'primereact/button';
-import '../../assets/layout/ProdutoImagens.css';
+// import '../../assets/layout/ProdutoImagens.css';
 import { FileUpload } from 'primereact/fileupload';
 import { Dialog } from 'primereact/dialog';
 import { useParams } from 'react-router-dom';
@@ -34,7 +34,6 @@ const ProdutoImagens = () => {
                 buscarPorProduto(result.data.id);
             });
         }
-        //setObjetos([{},{}])
     }, [objetos]);
 
     const buscarPorProduto = (idProduto) => {

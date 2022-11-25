@@ -36,6 +36,12 @@ public class ProdutoImagensController {
 	public ProdutoImagens inserir(@RequestParam("idProduto") Long id, @RequestParam("file") MultipartFile file) {
 		return produtoImagensService.inserir(id, file);
 	}
+	
+	@GetMapping("/produto/{id}")
+	@CrossOrigin("http://localhost:3000")
+	public List<ProdutoImagens> buscarPorProduto(@PathVariable("id") Long id){
+		return produtoImagensService.buscarPorProduto(id);
+	}
 	@PutMapping("/")
 	@CrossOrigin("http://localhost:3000")
 	public ProdutoImagens alterar(@RequestBody ProdutoImagens produtoImagens) {

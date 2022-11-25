@@ -1,14 +1,24 @@
 import Axios from "axios";
 
-export class ProdutoService {
+export class ProdutoImagensService {
     url = process.env.REACT_APP_URI_API+"/produtoImagens/";
 
-    categorias(){
+    produtoImagens(){
         return Axios.get(this.url);
     }
 
-    inserir(objeto){
-        return Axios.post(this.url, objeto);
+    uploadImagens(objeto){
+        const formData = new FormData();
+        formData.append('idProduto', objeto.idProduto);
+        formData.append('file', objeto.file);
+
+        const config = {
+            headers: {
+                'content-type':'multipart/form-data'
+            }
+        };
+
+        return Axios.post(this.url, formData, config);
     }
 
     alterar(objeto){
