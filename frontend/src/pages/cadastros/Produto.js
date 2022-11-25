@@ -43,11 +43,11 @@ const Produto = () => {
 
     useEffect(() => {
 
-        marcaService.listarTodos().then(res => {
+        marcaService.marcas().then(res => {
             setMarcas(res.data)
 
         });
-        categoriaService.listarTodos().then(res => {
+        categoriaService.categorias().then(res => {
             setCategorias(res.data)
 
         });
@@ -56,7 +56,7 @@ const Produto = () => {
 
     useEffect(() => {
         if (objetos == null) {
-            objetoService.listarTodos().then(res => {
+            objetoService.produtos().then(res => {
                 setObjetos(res.data)
 
             });

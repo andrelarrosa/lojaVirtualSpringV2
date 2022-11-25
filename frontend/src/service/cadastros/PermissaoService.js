@@ -3,7 +3,7 @@ import Axios from "axios";
 export class PermissaoService {
     url = process.env.REACT_APP_URI_API+"/permissao/";
 
-    categorias(){
+    permissao(){
         return Axios.get(this.url);
     }
 
