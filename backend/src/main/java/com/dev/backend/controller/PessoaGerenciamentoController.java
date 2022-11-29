@@ -1,11 +1,14 @@
 package com.dev.backend.controller;
 
+import java.util.HashMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +21,7 @@ import com.dev.backend.service.PessoaGerenciamentoService;
 
 @RestController
 @RequestMapping("/api/pessoa-gerenciamento")
+@CrossOrigin
 public class PessoaGerenciamentoController {
 	
 	private PessoaGerenciamentoService pessoaGerenciamentoService;
@@ -28,10 +32,10 @@ public class PessoaGerenciamentoController {
 	@Autowired
 	AuthenticationManager authenticationManager;
 	
-	@PostMapping("/senha-codigo")
-	public String recuperarCodigo(@RequestBody Pessoa pessoa) {
-		return pessoaGerenciamentoService.solicitarCodigo(pessoa.getEmail());
-	}
+    @PostMapping("/senha-codigo")
+    public String recuperarCodigo(@RequestBody Pessoa pessoa){
+       return pessoaGerenciamentoService.solicitarCodigo(pessoa.getEmail());
+    }
 	
 	@PostMapping("/senha-alterar")
 	public String alterarSenha(@RequestBody Pessoa pessoa) {
@@ -44,6 +48,8 @@ public class PessoaGerenciamentoController {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		Pessoa autenticado = (Pessoa) authentication.getPrincipal();
 		String token = jwtUtil.gerarTokenUsername(autenticado);
-		return ResponseEntity.ok(token); 
+		HashMap<String, String> map = new HashMap<>();
+		map.put("token", token);
+		return ResponseEntity.ok(map); 
 	}
 }

@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.dev.backend.entity.Pessoa;
@@ -19,22 +20,25 @@ public class PessoaGerenciamentoService {
 	@Autowired
 	private EmailService emailService;
 	
+	@Autowired
+	PasswordEncoder passwordEncoder;
+	
 	
 	public String solicitarCodigo(String email) {
 		Pessoa pessoa = pessoaRepository.findByEmail(email);
-		pessoa.setCodigoRecuperacaoSenha(this.getCodigoRecuperacaoSenha(pessoa.getId()));
+		pessoa.setCodigoRecuperacaoSenha(getCodigoRecuperacaoSenha(pessoa.getId()));
 		pessoa.setDataEnvioCodigo(new Date());
 		pessoaRepository.saveAndFlush(pessoa);
 		emailService.enviarEmailTexto(pessoa.getEmail(), "Código de recuperação de senha", pessoa.getCodigoRecuperacaoSenha());
 		return "código enviado com sucesso";
 	}
-	
+    
 	public String alterarSenha(Pessoa pessoa) {
 		Pessoa pessoaBanco = pessoaRepository.findByEmailAndCodigoRecuperacaoSenha(pessoa.getEmail(), pessoa.getCodigoRecuperacaoSenha());
 		Date diferenca = new Date(new Date().getTime() - pessoaBanco.getDataEnvioCodigo().getTime());
 		if(pessoaBanco!=null) {
 			if(diferenca.getTime()/1000 < 900) {
-				pessoaBanco.setSenha(pessoa.getSenha());
+				pessoaBanco.setSenha(passwordEncoder.encode(pessoa.getSenha()));
 				pessoaBanco.setCodigoRecuperacaoSenha(null);
 				pessoaRepository.saveAndFlush(pessoaBanco);
 				return "Senha alterada com sucesso!";
