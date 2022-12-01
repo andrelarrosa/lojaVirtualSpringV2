@@ -1,31 +1,24 @@
 package com.dev.backend.entity;
 
+import lombok.*;
 
-import java.util.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import lombok.Data;
+import javax.persistence.*;
 
 @Entity
-@Table(name="estado")
+@Table(name = "estado")
+@Builder
 @Data
-public class Estado {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
-	
-	private String nome;
-	private String sigla;
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date dataCriacao;
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date dataAtualizacao;
-	
+@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class Estado extends Auditavel {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
+    @Column(name = "nome")
+    private String nome;
+
+    @Column(name = "sigla")
+    private String sigla;
 }

@@ -16,8 +16,6 @@ import { InputMask } from 'primereact/inputmask';
 import { MultiSelect } from 'primereact/multiselect';
 
 
-//{nome:'Frank', permissaoPessoas:[{permissao:{id:55}}]}
-
 const Pessoa = () => {
 
     let objetoNovo = {
@@ -73,12 +71,12 @@ const Pessoa = () => {
     });
 
     useEffect(() => {
-        cidadeService.cidades().then(res => {
+        cidadeService.listarTodos().then(res => {
             setCidades(res.data)
 
         });
 
-        permissaoService.permissao().then(res => {
+        permissaoService.listarTodos().then(res => {
             let permissoesTemporarias = [];
             res.data.forEach(element => {
                 permissoesTemporarias.push({ permissao: element });
@@ -89,7 +87,8 @@ const Pessoa = () => {
 
     useEffect(() => {
         if (objetos == null) {
-            objetoService.pessoas().then(res => {
+            objetoService.listarTodos().then(res => {
+                console.log(res)
                 setObjetos(res.data)
 
             });
@@ -174,7 +173,7 @@ const Pessoa = () => {
         return (
             <React.Fragment>
                 <div className="my-2">
-                    <Button label="Nova" icon="pi pi-plus" className="p-button-success mr-2" onClick={openNew} />
+                    <Button label="Nova Pessoa" icon="pi pi-plus" className="p-button-success mr-2" onClick={openNew} />
 
                 </div>
             </React.Fragment>
@@ -212,7 +211,7 @@ const Pessoa = () => {
 
     const header = (
         <div className="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-            <h5 className="m-0">Registros Cadastrados</h5>
+            <h5 className="m-0">Pessoas Cadastrados</h5>
             <span className="block mt-2 md:mt-0 p-input-icon-left">
                 <i className="pi pi-search" />
                 <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Buscar..." />

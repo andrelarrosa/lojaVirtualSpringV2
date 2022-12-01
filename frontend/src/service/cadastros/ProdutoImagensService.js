@@ -1,31 +1,25 @@
-import Axios from "axios";
+import { ServiceBase } from './ServiceBase';
 
-export class ProdutoImagensService {
-    url = process.env.REACT_APP_URI_API+"/produtoImagens/";
+export class ProdutoImagensService extends ServiceBase {
 
-    produtoImagens(){
-        return Axios.get(this.url);
+    constructor() {
+        super("produtoImagens");
     }
 
-    uploadImagens(objeto){
+    uploadImagens(obj) {
         const formData = new FormData();
-        formData.append('idProduto', objeto.idProduto);
-        formData.append('file', objeto.file);
-
+        formData.append('idProduto', obj.idProduto);
+        formData.append('file', obj.file);
         const config = {
             headers: {
-                'content-type':'multipart/form-data'
+                'content-type': 'multipart/form-data'
             }
-        };
-
-        return Axios.post(this.url, formData, config);
+        }
+        return this.axiosInstance.post(this.url, formData, config);
     }
 
-    alterar(objeto){
-        return Axios.put(this.url, objeto);
+    buscarPorProduto(idProduto) {
+        return this.axiosInstance.get(this.url + "produto/" + idProduto);
     }
 
-    excluir(id){
-        return Axios.delete(this.url+id);
-    }
 }

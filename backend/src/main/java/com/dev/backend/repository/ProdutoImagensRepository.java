@@ -1,11 +1,11 @@
 package com.dev.backend.repository;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.dev.backend.entity.ProdutoImagens;
+import com.dev.backend.entity.Imagem;
 
-public interface ProdutoImagensRepository extends JpaRepository<ProdutoImagens, Long> {
-	public List<ProdutoImagens> findByProdutoId(Long id);
+import java.util.List;
+
+public interface ProdutoImagensRepository extends JpaRepository<Imagem, Long> {
+    List<Imagem> findByProdutoId(Long id);
 }

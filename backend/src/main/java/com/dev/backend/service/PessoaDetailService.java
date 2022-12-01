@@ -10,18 +10,18 @@ import com.dev.backend.entity.Pessoa;
 import com.dev.backend.repository.PessoaRepository;
 
 @Service
-public class PessoaDetailService implements UserDetailsService{
+public class PessoaDetailService implements UserDetailsService {
 
-	@Autowired
-	private PessoaRepository pessoaRepository;
-	
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Pessoa pessoa = pessoaRepository.findByEmail(username);
-		if(pessoa == null) {
-			throw new UsernameNotFoundException("Usuário não encontrado pelo email");
-		}
-		return pessoa;
-	}
+    @Autowired
+    private PessoaRepository pessoaRepository;
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Pessoa pessoa = pessoaRepository.findByEmail(username);
+
+        if (pessoa == null) {
+            throw new UsernameNotFoundException("Pessoa não encontrada");
+        }
+        return pessoa;
+    }
 }

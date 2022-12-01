@@ -1,41 +1,47 @@
 package com.dev.backend.service;
 
-import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
+import com.dev.backend.dto.ClienteRequestDTO;
+import com.dev.backend.entity.Pessoa;
+import com.dev.backend.exception.InfoException;
+import com.dev.backend.repository.PessoaClienteRepository;
+import com.dev.backend.util.UtilPessoa;
+import com.dev.repository.service.IClienteService;
+import com.dev.repository.service.IEmailService;
+import com.dev.repository.service.IPermissaoService;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.dev.backend.dto.PessoaClienteRequestDTO;
-import com.dev.backend.entity.Pessoa;
-import com.dev.backend.repository.PessoaClienteRepository;
-
 @Service
-public class PessoaClienteService {
+public class PessoaClienteService implements IClienteService {
+    @Autowired
+    private PessoaClienteRepository clienteRepository;
 
-	@Autowired
-	private PessoaClienteRepository pessoaClienteRepository;
-	
-	@Autowired
-	private PermissaoPessoaService permissaoPessoaService;
-	
-	@Autowired
-	private EmailService emailService;
-	
-	public Pessoa registrar(PessoaClienteRequestDTO pessoaClienteRequestDTO) {
-		Pessoa pessoa = new PessoaClienteRequestDTO().converter(pessoaClienteRequestDTO);
-		pessoa.setDataCriacao(new Date());
-		Pessoa pessoaNovo = pessoaClienteRepository.saveAndFlush(pessoa);
-		permissaoPessoaService.vincularPessoaPermissaoCliente(pessoaNovo);
-		Map<String, Object> propMap = new HashMap<String, Object>();
-		propMap.put("nome", pessoaNovo.getNome());
-		propMap.put("mensagem", "o registro na loja foi realizado com sucesso");
-		emailService.enviarEmailTemplate(pessoaNovo.getEmail(), "Cadastro na loja", propMap);
-		// emailService.enviarEmailTexto(pessoaNovo.getEmail(), "Cadastro na loja", "o registro na loja foi realizado com sucesso");
-		return pessoaNovo;
-	}
-	
-	
+    @Autowired
+    private IPermissaoService permissaoService;
 
+    @Autowired
+    private IEmailService emailService;
+
+    @Override
+    public Pessoa inserir(ClienteRequestDTO clienteRequestDTO) throws InfoException {
+        if (UtilPessoa.validarClienteRequestDTO(clienteRequestDTO)) {
+            Pessoa pessoa = clienteRepository.save(ClienteRequestDTO.converter(clienteRequestDTO));
+            permissaoService.vincularPessoaPermissaoCliente(pessoa);
+
+            Map<String, Object> proprMap = new HashMap<>();
+            proprMap.put("nome", pessoa.getNome());
+            proprMap.put("mensagem", "O registro na Loja Virtual PW foi realizado com sucesso! Em breve você receberá a senha de acesso por E-mail.");
+
+            emailService.enviarEmailTemplate(pessoa.getEmail(), "O seu cadastro na Loja Virtual PW foi realizado com sucesso!", proprMap);
+
+            return pessoa;
+        } else {
+            throw new InfoException("Ocorreu um erro ao salvar Cliente", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

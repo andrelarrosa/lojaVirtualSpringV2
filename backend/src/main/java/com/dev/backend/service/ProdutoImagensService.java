@@ -1,79 +1,91 @@
 package com.dev.backend.service;
 
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.dev.backend.entity.Imagem;
+import com.dev.backend.entity.Produto;
+import com.dev.backend.exception.InfoException;
+import com.dev.backend.repository.ProdutoImagensRepository;
+import com.dev.backend.repository.ProdutoRepository;
+import com.dev.repository.service.IImagemService;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
 import java.util.List;
-
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.dev.backend.entity.Produto;
-import com.dev.backend.entity.ProdutoImagens;
-import com.dev.backend.repository.ProdutoImagensRepository;
-import com.dev.backend.repository.ProdutoRepository;
+import java.util.Optional;
 
 @Service
-public class ProdutoImagensService {
-	@Autowired
-	private ProdutoImagensRepository produtoImagensRepository;
-	
-	@Autowired
-	private ProdutoRepository produtoRepository;
-	
-	public List<ProdutoImagens> buscarTodos(){
-		return produtoImagensRepository.findAll();
-	}
-	
-	public List<ProdutoImagens> buscarPorProduto(Long idProduto){
-		List<ProdutoImagens> listaProdutoImagens = produtoImagensRepository.findByProdutoId(idProduto);
-		for (ProdutoImagens produtoImagens : listaProdutoImagens) {
-			try (InputStream in = new FileInputStream("c:/imagens/"+produtoImagens.getNome())) {
-				produtoImagens.setArquivo(IOUtils.toByteArray(in));
-			} catch (IOException e) {
-				// TODO: handle exception
-				e.printStackTrace();
-			}
-		}
-		return listaProdutoImagens;
-	}
-	
-	public ProdutoImagens inserir(Long idProduto, MultipartFile file) {		
-		Produto produto = produtoRepository.findById(idProduto).get();
-		ProdutoImagens produtoImagens = new ProdutoImagens();
-		
-		try {
-			if (!file.isEmpty()) {
-				byte[] bytes = file.getBytes();
-				String nomeImagem = String.valueOf(produto.getId()) + file.getOriginalFilename();
-				Path caminho = Paths.get("C:/imagensJava/" + nomeImagem);
-				Files.write(caminho, bytes);
-				produtoImagens.setNome(nomeImagem);				
-			}
-		}catch(IOException e) {
-			e.printStackTrace();
-		}
-		
-		produtoImagens.setProduto(produto);
-		produtoImagens.setDataCriacao(new Date());
-		produtoImagens = produtoImagensRepository.saveAndFlush(produtoImagens);
-		return produtoImagens;
-	}
-	
+public class ProdutoImagensService implements IImagemService {
+    @Autowired
+    private ProdutoImagensRepository imagemRepository;
 
-	public ProdutoImagens alterar(ProdutoImagens produtoImagens) {
-		produtoImagens.setDataAtualizacao(new Date());
-		return produtoImagensRepository.saveAndFlush(produtoImagens);
-	}
-	
-	public void excluir(Long id) {
-		ProdutoImagens produtoImagens = produtoImagensRepository.findById(id).get();
-		produtoImagensRepository.delete(produtoImagens);
-	}
+    @Autowired
+    private ProdutoRepository produtoRepository;
+
+    @Override
+    public List<Imagem> buscarTodos() {
+        return imagemRepository.findAll();
+    }
+
+    @Override
+    public List<Imagem> buscarPorProdutoId(Long id) {
+        List<Imagem> listaProdutoImagens = imagemRepository.findByProdutoId(id);
+
+        for (Imagem produtoImagens : listaProdutoImagens) {
+            try (InputStream inputStream = new FileInputStream("C:/andre/imagens/" + produtoImagens.getNome())) {
+                produtoImagens.setArquivo(IOUtils.toByteArray(inputStream));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return listaProdutoImagens;
+    }
+
+    @Override
+    public Imagem inserir(Long idProduto, MultipartFile multipartFile) throws IOException, InfoException {
+        Optional<Produto> produtoOptional = produtoRepository.findById(idProduto);
+        Imagem imagem = new Imagem();
+
+        if (produtoOptional.isPresent()) {
+            try {
+                if (!multipartFile.isEmpty()) {
+                    String nomeImagem = "produto_" + produtoOptional.get().getId() + "_" + multipartFile.getOriginalFilename();
+                    Files.write(Paths.get("D:\\Usuário\\ImagensPW\\" + nomeImagem), multipartFile.getBytes());
+
+                    imagem.setNome(nomeImagem);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            imagem.setProduto(produtoOptional.get());
+            imagem = imagemRepository.save(imagem);
+            return imagem;
+        } else {
+            throw new InfoException("Erro ao salvar imagem", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public Imagem alterar(Long id, Imagem imagem) throws InfoException {
+        return null;
+    }
+
+    @Override
+    public void excluir(Long id) throws InfoException {
+        Optional<Imagem> imagem = imagemRepository.findById(id);
+
+        if (imagem.isPresent()) {
+            imagemRepository.delete(imagem.get());
+        } else {
+            throw new InfoException("Imagem não encontrada", HttpStatus.NOT_FOUND);
+        }
+    }
 }

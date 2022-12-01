@@ -1,27 +1,23 @@
 package com.dev.backend.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
-import com.dev.backend.dto.PessoaClienteRequestDTO;
+import com.dev.backend.dto.ClienteRequestDTO;
 import com.dev.backend.entity.Pessoa;
-import com.dev.backend.service.PessoaClienteService;
+import com.dev.backend.exception.InfoException;
+import com.dev.repository.service.IClienteService;
 
 @RestController
-@RequestMapping("api/cliente")
-public class PessoaClienteController  {
+@RequestMapping("/api/cliente")
+@RequiredArgsConstructor
+public class PessoaClienteController {
 
-	@Autowired
-	private PessoaClienteService pessoaClienteService;
-	
-	@PostMapping("/")
-	@CrossOrigin("http://localhost:3000")
-	public Pessoa inserir(@RequestBody PessoaClienteRequestDTO pessoaClienteRequestDTO) {
-		return pessoaClienteService.registrar(pessoaClienteRequestDTO);
-	}
-	
+    private final IClienteService clienteService;
+
+    @PostMapping("/cadastrar")
+    @CrossOrigin("http://localhost:3000")
+    public Pessoa inserir(@RequestBody ClienteRequestDTO clienteRequestDTO) throws InfoException {
+        return clienteService.inserir(clienteRequestDTO);
+    }
 }

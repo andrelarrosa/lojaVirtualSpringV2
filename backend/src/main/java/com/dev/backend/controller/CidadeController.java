@@ -1,48 +1,44 @@
 package com.dev.backend.controller;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.dev.backend.entity.Cidade;
-import com.dev.backend.service.CidadeService;
+import com.dev.backend.exception.InfoException;
+import com.dev.repository.service.ICidadeService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/cidade")
+@RequiredArgsConstructor
 public class CidadeController {
 
-	@Autowired
-	private CidadeService cidadeService;
-	
-	@GetMapping("/")
-	@CrossOrigin("http://localhost:3000")
-	public List<Cidade> buscarTodos(){
-		return cidadeService.buscarTodos();
-	}
-	@PostMapping("/")
-	@CrossOrigin("http://localhost:3000")
-	public Cidade inserir(@RequestBody Cidade cidade) {
-		return cidadeService.inserir(cidade);
-	}
-	@PutMapping("/")
-	@CrossOrigin("http://localhost:3000")
-	public Cidade alterar(@RequestBody Cidade cidade) {
-		return cidadeService.alterar(cidade);
-	}
-	@DeleteMapping("/{id}")
-	@CrossOrigin("http://localhost:3000")
-	public ResponseEntity<Void> excluir(@PathVariable("id")  Long id){
-		cidadeService.excluir(id);
-		return ResponseEntity.ok().build();
-	}
+    private final ICidadeService cidadeService;
+
+    @GetMapping
+    @CrossOrigin("http://localhost:3000")
+    public List<Cidade> buscarTodos() {
+        return cidadeService.buscarTodos();
+    }
+
+    @PostMapping("/cadastrar")
+    @CrossOrigin("http://localhost:3000")
+    public Cidade inserir(@RequestBody Cidade cidade) throws InfoException {
+        return cidadeService.inserir(cidade);
+    }
+
+    @PutMapping("/atualizar/{id}")
+    @CrossOrigin("http://localhost:3000")
+    public Cidade alterar(@PathVariable("id") Long id, @RequestBody Cidade cidade) throws InfoException {
+        return cidadeService.alterar(id, cidade);
+    }
+
+    @DeleteMapping("/deletar/{id}")
+    @CrossOrigin("http://localhost:3000")
+    public ResponseEntity<Void> excluir(@PathVariable("id") Long id) throws InfoException {
+        cidadeService.excluir(id);
+        return ResponseEntity.ok().build();
+    }
 }

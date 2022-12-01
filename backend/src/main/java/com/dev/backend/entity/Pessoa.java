@@ -1,107 +1,98 @@
 package com.dev.backend.entity;
 
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import javax.persistence.*;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import com.dev.backend.entity.Cidade;
-
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
-
 @Entity
-@Table(name="pessoa")
+@Table(name = "pessoa")
+@Builder
 @Data
-public class Pessoa implements UserDetails{
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
-	
-	private String nome;
-	private String cpf;
-	private String email;
-	private String codigoRecuperacaoSenha;
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date dataEnvioCodigo;
-	private String senha;
-	private String endereco;
-	private String cep;
-	@ManyToOne
-	@JoinColumn(name="idCidade")
-	private Cidade cidade;
-	
-	@OneToMany(mappedBy = "pessoa", orphanRemoval = true, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-	@Setter(value = AccessLevel.NONE)
-	private List<PermissaoPessoa> permissaoPessoa;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date dataCriacao;
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date dataAtualizacao;
-	
-	public void setPermissaoPessoa(List<PermissaoPessoa> permissaoPessoas) {
-		for(PermissaoPessoa permissaoPessoa:permissaoPessoas) {
-			permissaoPessoa.setPessoa(this);
-		}
-		this.permissaoPessoa = permissaoPessoas;
-	}
+@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class Pessoa extends Auditavel implements UserDetails {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return permissaoPessoa;
-	}
+    @Column(name = "nome")
+    private String nome;
 
-	@Override
-	public String getPassword() {
-		// TODO Auto-generated method stub
-		return senha;
-	}
+    @Column(name = "cpf")
+    private String cpf;
 
-	@Override
-	public String getUsername() {
-		// TODO Auto-generated method stub
-		return email;
-	}
+    @Column(name = "email")
+    private String email;
 
-	@Override
-	public boolean isAccountNonExpired() {
-		// TODO Auto-generated method stub
-		return true;
-	}
+    @Column(name = "codigo_recuperacao_senha")
+    private String codigoRecuperacaoSenha;
 
-	@Override
-	public boolean isAccountNonLocked() {
-		// TODO Auto-generated method stub
-		return true;
-	}
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "data_envio_codigo")
+    private Date dataEnvioCodigo;
 
-	@Override
-	public boolean isCredentialsNonExpired() {
-		// TODO Auto-generated method stub
-		return true;
-	}
+    @Column(name = "senha")
+    private String senha;
 
-	@Override
-	public boolean isEnabled() {
-		// TODO Auto-generated method stub
-		return true;
-	}
+    @Column(name = "endereco")
+    private String endereco;
+
+    @Column(name = "cep")
+    private String cep;
+
+    @ManyToOne
+    @JoinColumn(name = "id_cidade")
+    private Cidade cidade;
+
+    @OneToMany(mappedBy = "pessoa", orphanRemoval = true, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @Setter(value = AccessLevel.NONE)
+    private List<PermissaoPessoa> permissaoPessoas;
+
+    public void setPermissaoPessoas(List<PermissaoPessoa> permissaoPessoaList) {
+        for (PermissaoPessoa permissaoPessoa : permissaoPessoaList) {
+            permissaoPessoa.setPessoa(this);
+        }
+        this.permissaoPessoas = permissaoPessoaList;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return permissaoPessoas;
+    }
+
+    @Override
+    public String getPassword() {
+        return senha;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

@@ -1,56 +1,50 @@
 package com.dev.backend.controller;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.dev.backend.entity.ProdutoImagens;
-import com.dev.backend.service.ProdutoImagensService;
+import com.dev.backend.entity.Imagem;
+import com.dev.backend.exception.InfoException;
+import com.dev.repository.service.IImagemService;
+
+import java.io.IOException;
+import java.util.List;
 
 @RestController
-@RequestMapping("api/produtoImagens")
+@RequestMapping("/api/imagem")
+@RequiredArgsConstructor
 public class ProdutoImagensController {
+    private final IImagemService imagemService;
 
-	@Autowired
-	private ProdutoImagensService produtoImagensService;
-	
-	@GetMapping("/")
-	@CrossOrigin("http://localhost:3000")
-	public List<ProdutoImagens> buscarTodos(){
-		return produtoImagensService.buscarTodos();
-	}
-	@PostMapping("/")
-	@CrossOrigin("http://localhost:3000")
-	public ProdutoImagens inserir(@RequestParam("idProduto") Long id, @RequestParam("file") MultipartFile file) {
-		return produtoImagensService.inserir(id, file);
-	}
-	
-	@GetMapping("/produto/{id}")
-	@CrossOrigin("http://localhost:3000")
-	public List<ProdutoImagens> buscarPorProduto(@PathVariable("id") Long id){
-		return produtoImagensService.buscarPorProduto(id);
-	}
-	@PutMapping("/")
-	@CrossOrigin("http://localhost:3000")
-	public ProdutoImagens alterar(@RequestBody ProdutoImagens produtoImagens) {
-		return produtoImagensService.alterar(produtoImagens);
-	}
-	@DeleteMapping("/{id}")
-	@CrossOrigin("http://localhost:3000")
-	public ResponseEntity<Void> excluir(@PathVariable("id")  Long id){
-		produtoImagensService.excluir(id);
-		return ResponseEntity.ok().build();
-	}
+    @GetMapping
+    public List<Imagem> buscarTodos() {
+        return imagemService.buscarTodos();
+    }
+
+    @GetMapping("/produto/{id}")
+    @CrossOrigin("http://localhost:3000")
+    public List<Imagem> buscarPorProdutoId(@PathVariable("id") Long id) {
+        return imagemService.buscarPorProdutoId(id);
+    }
+
+    @PostMapping("/cadastrar")
+    @CrossOrigin("http://localhost:3000")
+    public Imagem inserir(@RequestParam("idProduto") Long idProduto, @RequestParam("arquivo") MultipartFile arquivo) throws InfoException, IOException {
+        return imagemService.inserir(idProduto, arquivo);
+    }
+
+    @PutMapping("/atualizar/{id}")
+    @CrossOrigin("http://localhost:3000")
+    public Imagem alterar(@PathVariable("id") Long id, @RequestBody Imagem imagem) throws InfoException {
+        return imagemService.alterar(id, imagem);
+    }
+
+    @DeleteMapping("/deletar/{id}")
+    @CrossOrigin("http://localhost:3000")
+    public ResponseEntity<Void> excluir(@PathVariable("id") Long id) throws InfoException {
+        imagemService.excluir(id);
+        return ResponseEntity.ok().build();
+    }
 }

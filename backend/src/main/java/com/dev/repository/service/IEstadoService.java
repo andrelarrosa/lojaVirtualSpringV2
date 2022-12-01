@@ -1,0 +1,16 @@
+package com.dev.repository.service;
+
+import java.util.List;
+
+import com.dev.backend.entity.Estado;
+import com.dev.backend.exception.InfoException;
+
+public interface IEstadoService {
+    List<Estado> buscarTodos();
+
+    Estado inserir(Estado estado) throws InfoException;
+
+    Estado alterar(Long id, Estado estado) throws InfoException;
+
+    void excluir(Long id) throws InfoException;
+}

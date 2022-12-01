@@ -1,21 +1,10 @@
-import Axios from "axios";
+import axios from 'axios';
+import { ServiceBase } from './ServiceBase';
 
-export class PermissaoService {
-    url = process.env.REACT_APP_URI_API+"/permissao/";
+export class PermissaoService extends ServiceBase {
 
-    permissao(){
-        return Axios.get(this.url);
-    }
+constructor(){
+    super("permissao");
+}
 
-    inserir(objeto){
-        return Axios.post(this.url, objeto);
-    }
-
-    alterar(objeto){
-        return Axios.put(this.url, objeto);
-    }
-
-    excluir(id){
-        return Axios.delete(this.url+id);
-    }
 }

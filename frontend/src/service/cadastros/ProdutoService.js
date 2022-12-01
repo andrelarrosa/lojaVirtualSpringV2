@@ -1,25 +1,10 @@
-import Axios from "axios";
+import axios from 'axios';
+import { ServiceBase } from './ServiceBase';
 
-export class ProdutoService {
-    url = process.env.REACT_APP_URI_API+"/produto/";
+export class ProdutoService extends ServiceBase {
 
-    produtos(){
-        return Axios.get(this.url);
-    }
+constructor(){
+    super("produto");
+}
 
-    buscarPorId(id){
-        return Axios.get(this.url+id);
-    }
-
-    inserir(objeto){
-        return Axios.post(this.url, objeto);
-    }
-
-    alterar(objeto){
-        return Axios.put(this.url, objeto);
-    }
-
-    excluir(id){
-        return Axios.delete(this.url+id);
-    }
 }
